@@ -1,23 +1,29 @@
 package com.company;
 
 public class Token {
-    private String value = "";
-    private int category = -1;
+    private String value;
+    private Category category;
 
-    public String getValue() {  //getter for value
+    public Token(String input, Category category){
+        this.value = input;
+        this.category = category;
+    }
+
+    public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {    //setter for value
-        this.value = value;
-    }
-
-    public int getCategory() {  //getter for category
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(int category) { //setter for category
-        //TODO: find a way to give each token a unique category
-        this.category = category;
+    public void printTokens() {
+        if (this.category == Category.ID || this.category == Category.COMMENTS) {
+            System.out.println("Token Category: " + this.category + ", value \"" + this.value + "\"");
+        } else if(this.category == Category.INVALID){
+            System.out.println("Error: '" + value + "' not allowed");
+        } else {
+            System.out.println("Token Category: " + this.category + " keyword, value \"" + this.value + "\"");
+        }
     }
 }
