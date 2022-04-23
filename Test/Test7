@@ -1,0 +1,6 @@
+//single comment\n //comment\r // single comment // \n//
+//c123 /*multi \n line \n comment 1/2 / 3 */
+/*  bad comment *
+/* multi \n line \n comment */
+  "this is a string"
+\"bad string
