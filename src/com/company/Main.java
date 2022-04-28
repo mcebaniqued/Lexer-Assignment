@@ -324,9 +324,7 @@ public class Main {
                                 break;
                             }
                         }
-                        //if(value != "") {
-                            list.add(new Token(value, Category.COMMENTS));
-                        //}
+                        list.add(new Token(value, Category.COMMENTS));
                         value = "";
                     }
                     //COMMENTS (Multi Line)
@@ -377,14 +375,16 @@ public class Main {
             }
             //All the symbols in Category except '"' and '/' (already covered in STRINGS and COMMENTS above respectively
             else if (!(Character.isWhitespace(input.charAt(current)) || Character.isAlphabetic(input.charAt(current)) || Character.isDigit(input.charAt(current)))){
-                while (current < input.length()) {
+                /*while (current < input.length()) {
                     if(!(Character.isWhitespace(input.charAt(current)) || Character.isAlphabetic(input.charAt(current)) || Character.isDigit(input.charAt(current))) && (input.charAt(current) != '"' || input.charAt(current) == '/')) {
                         value += input.charAt(current);
                         current++;
                     } else {
                         break;
                     }
-                }
+                }*/
+                value += input.charAt(current);
+                current++;
                 switch (value) {
                     case ":" -> {
                         list.add(new Token(value, Category.COLON));
@@ -403,21 +403,41 @@ public class Main {
                         value = "";
                     }
                     case ">" -> {
-                        list.add(new Token(value, Category.GREATER));
-                        value = "";
+                        if(current < input.length()) {
+                            if (input.charAt(current) == '=') {
+                                value += input.charAt(current);
+                                current++;
+                                list.add(new Token(value, Category.GREATER_EQUAL));
+                            } else {
+                                list.add(new Token(value, Category.GREATER));
+                            }
+                            value = "";
+                        } else {
+                            list.add(new Token(value, Category.GREATER));
+                        }
                     }
-                    case ">=" -> {
+                    /*case ">=" -> {
                         list.add(new Token(value, Category.GREATER_EQUAL));
                         value = "";
-                    }
+                    }*/
                     case "<" -> {
-                        list.add(new Token(value, Category.LESS));
-                        value = "";
+                        if(current < input.length()) {
+                            if (input.charAt(current) == '='){
+                                value += input.charAt(current);
+                                current++;
+                                list.add(new Token(value, Category.LESS_EQUAL));
+                            } else {
+                                list.add(new Token(value, Category.LESS));
+                            }
+                            value = "";
+                        } else {
+                            list.add(new Token(value, Category.LESS));
+                        }
                     }
-                    case "<=" -> {
+                    /*case "<=" -> {
                         list.add(new Token(value, Category.LESS_EQUAL));
                         value = "";
-                    }
+                    }*/
                     case "+" -> {
                         list.add(new Token(value, Category.PLUS));
                         value = "";
@@ -464,26 +484,28 @@ public class Main {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        //linked list of token classes
-        LinkedList<Token> tokenList = new LinkedList<>();    //linked list of token classes
-        String str; //holds a string of each line from the file
-
         //Test Folder as command line argument
         //Run > Edit Configurations... > Program Arguments > "Test"
         File folder = new File(args[0]);    //Get the name of the folder from the command line
         for(File file : Objects.requireNonNull(folder.listFiles())){
             file = new File(folder + "/" + file.getName()); //Access each file from the folder
             Scanner scan = new Scanner(file);   //scan the file
+            String str = ""; //holds all strings from each file
+
+            System.out.println("\nInput: " + file.getName());
+            System.out.println("Output:");
 
             while(scan.hasNextLine()) {
-                str = scan.nextLine();  //Scan each line
-                tokenList.addAll(tokenizer(str));   //Tokenize each line and add all tokens in the list
+                str += scan.nextLine();  //Scan each line
+                str += '\n';
             }
-        }
+            //linked list of token classes
+            LinkedList<Token> tokenList = new LinkedList<>(tokenizer(str));   //Tokenize each line and add all tokens in the list
 
-        //List out all the tokens from the list
-        for(Token token : tokenList){
-            token.printTokens();
+            //List out all the tokens from the list
+            for(Token token : tokenList){
+                token.printTokens();
+            }
         }
     }
 }
